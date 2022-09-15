@@ -1,10 +1,10 @@
-from unittest import TestCase
+import json
 import unittest
 from app import create_app
-from config import configs
 from app import db
+from config import configs
 
-class TestAPI(TestCase):
+class TestAPI(unittest.TestCase):
     def setUp(self) -> None:
         config = configs['test']
         self.app = create_app(config)
@@ -18,6 +18,7 @@ class TestAPI(TestCase):
     def tearDown(self) -> None:
         with self.app.app_context():
             db.drop_all()
+        # self.app_context.pop()
 
     def test_get_all(self):
         path = self.path + 'task'
@@ -26,9 +27,9 @@ class TestAPI(TestCase):
 
     def test_get_first(self):
         path = self.path +'task/1'
-        print(path)
         response = self.client.get(path = path, content_type = self.content_type)
         self.assertEqual(response.status_code, 200)
 
-if __name__ == "__main__":
-    unittest.main()
+        data = json.loads(response.data.decode('utf-8'))
+        task_id = data['data']['id']
+        self.assertEqual(task_id, 1)

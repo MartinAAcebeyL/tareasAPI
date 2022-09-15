@@ -16,3 +16,7 @@ configs = {
     'test':Test,
     'default':Default
 }
+
+# APP_ENV = APP_ENV_TESTING
+# TESTING = True
+# WTF_CSRF_ENABLED = False
