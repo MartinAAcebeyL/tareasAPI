@@ -10,6 +10,26 @@ class Task(db.Model):
     deadLine = db.Column(db.DateTime(), nullable=False)
     date = db.Column(db.DateTime(), nullable=False, default= datetime.now())
 
+    @classmethod
+    def create(cls, title, description, deadLine):
+        return Task(title=title, description=description, deadLine=deadLine)
+
+    def save(self):
+        try:
+            db.session.add(self)
+            db.session.commit()
+            return True
+        except:
+            return False
+
+    def unsave(self):
+        try:
+            db.session.delete(self)
+            db.session.commit()
+            return True
+        except:
+            return False
+
     def __str__(self) -> str:
         print(self.title)
 

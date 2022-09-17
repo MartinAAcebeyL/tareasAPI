@@ -1,6 +1,8 @@
+import re
 from flask import Blueprint
+from flask import request
 
-from .responses import response, not_found
+from .responses import *
 from .models.tasks import Task
 
 api = Blueprint('api', __name__, url_prefix='/api')
@@ -19,12 +21,43 @@ def get_task(id):
 
 @api.route('/task', methods=['POST'])
 def create_task():
-    pass
+    response = request.get_json()
+    if response is None:
+        return bad_request()
+    
+    if 'title' not in response or len(response['title']) > 50:
+        return bad_request()
+
+    if 'description' not in response or 'deadLine' not in response:
+        return bad_request()
+
+    task = Task.create(response['title'], response['description'], response['deadLine'])
+    if task.save():
+        return task.serialize()
+
+    return bad_request()
 
 @api.route('/task/<id>', methods=['PUT'])
 def update_tasks(id):
-    pass
+    task = Task.query.get(id)
+    if task is None:
+        return not_found()
+    response = request.get_json()
+    
+    task.title = response.get('title', task.title)
+    task.description = response.get('description', task.description)
+    task.deadLine = response.get('deadLine', task.deadLine)
+
+    if task.save():
+        return task.serialize()
+    return bad_request()
 
 @api.route('/task/<id>', methods=['DELETE'])
-def delete_tasks():
-    pass
+def delete_tasks(id):
+    task = Task.query.get(id)
+    if task is None:
+        return not_found()
+
+    if task.unsave():
+        return task.serialize()
+    return bad_request()

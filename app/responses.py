@@ -1,7 +1,6 @@
 from flask import jsonify
 
-
-def response(data):
+def response(data:dict):
     return jsonify(
         {
             'succses':True,
@@ -19,10 +18,12 @@ def not_found():
         }
     ),404
 
-def hidden(data):
+def bad_request():
     return jsonify(
         {
-            'succses':True,
-            'data':data
+            'succses':False,
+            'data':{},
+            'message':'mal requerimiento',
+            'code':400
         }
-    ),200
+    ),400
