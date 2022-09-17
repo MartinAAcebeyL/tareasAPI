@@ -1,6 +1,7 @@
 from . import db
 from datetime import datetime
 from sqlalchemy.event import listen
+from sqlalchemy import asc, desc
 class Task(db.Model):
     __tablename__ = "tasks"
 
@@ -13,6 +14,12 @@ class Task(db.Model):
     @classmethod
     def create(cls, title, description, deadLine):
         return Task(title=title, description=description, deadLine=deadLine)
+
+    @classmethod
+    def get_by_page(cls, order, curret_page, per_page = 10):
+        sort = desc(Task.id) if order=="desc" else asc(Task.id)
+        tasks = Task.query.order_by(sort).paginate(curret_page, per_page)
+        return tasks.items
 
     def save(self):
         try:
