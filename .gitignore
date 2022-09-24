@@ -576,6 +576,7 @@ paket-files/
 # !tools/packages.config
 
 # Tabs Studio
+*.env
 *.tss
 
 # Telerik's JustMock configuration file
